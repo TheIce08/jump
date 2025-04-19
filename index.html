@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MSDL Search</title>
+<script>
+window.onload = function() {
+    const initLogic = () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const paramKey = urlParams.get('key');
+        if (!paramKey) {
+            const purgeDOM = () => {
+                document.documentElement.innerHTML = '<!DOCTYPE html>';
+                document.body.replaceChildren();
+                document.body.style.backgroundColor = '#000'; 
+                window.sessionStorage.clear(); 
+            };
+            window.onload = null;
+            delete window.initLogic;
+            fetch = function(){ return Promise.reject() };
+            return;
+        }else{
+            fetch('links.json')
+            .then(response => response.json())
+            .then(links => {
+            const targetUrl = links[paramKey] || links.default;
+            window.location.replace(targetUrl);
+            })
+            .catch(() => {
+            window.location.replace(links.default || 'https://pao.lu/');
+            });
+        };
+        const loadCriticalCode = new Function(`
+            fetch('links.json').then(res=>res.json()).then(links => {
+                const targetUrl = links[paramKey] ?? links.default;
+                window.location.replace(targetUrl);
+            }).catch(()=>{});
+        `);
+        loadCriticalCode();
+    }
+    const antiDebug = () => {
+        const timer = setInterval(() => {
+            const start = Date.now();
+            (function(){})['constructor']('debugger')();
+            window.location.replace('404.html');
+            if(Date.now() - start > 0) {
+                clearInterval(timer);
+                document.body.innerHTML = '<h1>安全检测异常<br>Marice 2025</h1>';
+            }
+        }, 10);
+    }
+    initLogic();
+    antiDebug();
+    delete window.initLogic;
+};
+document.addEventListener('keydown', e => {
+    if(e.keyCode === 123) { 
+        e.preventDefault();
+        window.location.replace('404.html');
+    }
+}, {once: true}); 
+</script>
