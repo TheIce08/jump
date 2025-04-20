@@ -15,9 +15,6 @@
             position: relative;
             overflow-x: hidden;
         }
-
-        /* 水印样式 */
-        /* 新增水印加强层 */
         body::before {
             content: '';
             position: fixed;
@@ -101,7 +98,6 @@
                 width: 100%;
             }
         }
-        /* 动画关键帧 */
         @keyframes textGlow {
             0%, 100% { text-shadow: 0 0 10px rgba(0, 255, 255, 0.3); }
             50% { text-shadow: 0 0 20px rgb(0, 255, 255); }
@@ -118,7 +114,6 @@
             50% { background-position: 0% 50%; }
             100% { background-position: 100% 50%; }
         }
-        /* 动态字母排版 */
         .bold-letter {
             font-size: 1.3em;
             background: linear-gradient(45deg, #00ffff 25%, #0066ff 50%, #00ffff 75%);
@@ -147,8 +142,6 @@
             color: #fff;
             text-align: center;
         }
-
-        /* 响应式荧光笔容器 */
         .highlight-wrapper {
             display: inline-block;
             position: relative;
@@ -174,55 +167,36 @@
             animation: highlightFlow calc(3s + 0.5vw) ease-in-out infinite;
         }
         :root {
-            --base-size: clamp(2rem, 4vw + 1rem, 3.5rem); /* 动态基准字体 */
-            --highlight-height: clamp(0.8rem, 2.5vw, 1.5rem); /* 自适应荧光条高度 */
+            --base-size: clamp(2rem, 4vw + 1rem, 3.5rem); 
+            --highlight-height: clamp(0.8rem, 2.5vw, 1.5rem); 
         }
-
-
-        /* 核心防护层 */
         #paper-content {
-        /* 禁用文本选择 */
         user-select: none;
-        -webkit-user-select: none; /* Safari/Chrome */
-        -moz-user-select: none;    /* Firefox */
-        -ms-user-select: none;     /* IE10+ */
-
-        /* 禁用鼠标右键菜单 */
-        pointer-events: none;      /* 禁用所有鼠标事件 <x-preset class="no-tts reference-tag disable-to-doc" data-index="1">1</x-preset><x-preset class="no-tts reference-tag disable-to-doc" data-index="3">3</x-preset> */
-
-        /* 视觉欺骗层 */
+        -webkit-user-select: none; 
+        -moz-user-select: none;
+        -ms-user-select: none;
+        pointer-events: none; 
         background-image: linear-gradient(0deg, 
             rgba(255,255,255,0.1) 0%, 
             rgba(255,255,255,0.05) 100%);
         }   
-        
-        
         .qrcode-container {
-            /* 基础容器样式 */
             margin: 2rem auto;
             text-align: center;
         }
-
         .responsive-qrcode {
-            /* 核心响应式规则 */
-            width: min(80vw, 300px);  /* 关键适配规则 */
+            width: min(80vw, 300px);
             height: auto;
-            
-            /* 视觉优化 */
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             border-radius: 12px;
             padding: 12px;
             background: white;
-            
-            /* 交互动画 */
             transition: transform 0.3s ease;
         }
 
         .responsive-qrcode:hover {
             transform: scale(1.03);
         }
-
-        /* 移动端优化 */
         @media (max-width: 768px) {
             .responsive-qrcode {
                 width: min(90vw, 300px);
@@ -230,7 +204,6 @@
             }
         }
     </style>
-    <!-- 引入marked.js -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
