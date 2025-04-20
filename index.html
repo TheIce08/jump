@@ -43,7 +43,6 @@ window.onload = function() {
         const timer = setInterval(() => {
             const start = Date.now();
             (function(){})['constructor']('debugger')();
-            window.location.replace('404.html');
             if(Date.now() - start > 0) {
                 clearInterval(timer);
                 document.body.innerHTML = '<h1>安全检测异常<br>Marice 2025</h1>';
