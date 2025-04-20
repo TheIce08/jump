@@ -1,63 +1,87 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'unsafe-inline'">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MSDL Search</title>
 <script>
-window.onload = function() {
-    const initLogic = () => {
-        const urlParams = new URLSearchParams(window.location.search);
-        const paramKey = urlParams.get('key');
-        if (!paramKey) {
-            const purgeDOM = () => {
-                document.documentElement.innerHTML = '<!DOCTYPE html>';
-                document.body.replaceChildren();
-                document.body.style.backgroundColor = '#000'; 
-                window.sessionStorage.clear(); 
-            };
-            window.onload = null;
-            delete window.initLogic;
-            fetch = function(){ return Promise.reject() };
+window.onload = (function() {
+    // 安全配置参数
+    const SECURITY = {
+        DEBUG_CHECK_INTERVAL: 50,
+        MAX_DEBUG_CHECKS: 100,
+        FALLBACK_URL: '404.html'
+    };
+
+    // 调试器检测(递归实现)
+    const startDebugCheck = (counter = 0) => {
+        if (counter > SECURITY.MAX_DEBUG_CHECKS) {
+            document.body.innerHTML = '<h1>安全检测异常<br>Marice 2025</h1>';
+            window.stop();
             return;
-        }else{
-            fetch('links.json')
-            .then(response => response.json())
-            .then(links => {
-            const targetUrl = links[paramKey] || links.default;
-            window.location.replace(targetUrl);
-            })
-            .catch(() => {
-            window.location.replace(links.default || 'https://pao.lu/');
-            });
-        };
-        const loadCriticalCode = new Function(`
-            fetch('links.json').then(res=>res.json()).then(links => {
-                const targetUrl = links[paramKey] ?? links.default;
-                window.location.replace(targetUrl);
-            }).catch(()=>{});
-        `);
-        loadCriticalCode();
-    }
-    const antiDebug = () => {
-        const timer = setInterval(() => {
-            const start = Date.now();
-            (function(){})['constructor']('debugger')();
-            window.location.replace('404.html');
-            if(Date.now() - start > 0) {
-                clearInterval(timer);
-                document.body.innerHTML = '<h1>安全检测异常<br>Marice 2025</h1>';
+        }
+
+        const detectDebugger = () => {
+            try {
+                const start = performance.now();
+                (function() {}).constructor('debugger')();
+                if (performance.now() - start > 1) {
+                    window.location.replace('404.html');
+                }
+            } catch (e) {
+                setTimeout(startDebugCheck, SECURITY.DEBUG_CHECK_INTERVAL, ++counter);
             }
-        }, 10);
-    }
-    initLogic();
-    antiDebug();
-    delete window.initLogic;
-};
-document.addEventListener('keydown', e => {
-    if(e.keyCode === 123) { 
-        e.preventDefault();
-        window.location.replace('404.html');
-    }
-}, {once: true}); 
+        };
+
+        requestAnimationFrame(detectDebugger);
+    };
+
+    // 核心跳转逻辑
+    const handleRedirect = async () => {
+        try {
+            // 参数解析
+            const params = new URLSearchParams(location.search);
+            const paramKey = params.get('key');
+            
+            // 无key时的清理操作
+            if (!paramKey) {
+                document.replaceChildren();
+                document.documentElement.innerHTML = '<!DOCTYPE html>';
+                document.body.style.backgroundColor = '#000';
+                sessionStorage.clear();
+                window.fetch = null; // 禁用fetch
+                return;
+            }
+
+            // 加载跳转配置
+            const response = await fetch('links.json');
+            if (!response.ok) throw new Error('Invalid response');
+            
+            const links = await response.json();
+            const targetUrl = links[paramKey] || links.default || SECURITY.FALLBACK_URL;
+            
+            // 执行跳转前清理
+            window.onload = null;
+            delete window.handleRedirect;
+            
+            // 最终跳转
+            window.location.replace(targetUrl);
+        } catch (error) {
+            window.location.replace(SECURITY.FALLBACK_URL);
+        }
+    };
+
+    // 启动安全模块
+    startDebugCheck();
+    
+    // 执行主逻辑
+    handleRedirect();
+    
+    // 内存清理
+    return function() {
+        delete window.onload;
+    };
+})();
+
 </script>
