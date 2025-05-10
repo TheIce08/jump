@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marice Study Library</title>
+    <link href="../source/posts.css" type="text/css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="../source/posts.js"></script>
+</head>
+<body>
+    <h1 class="main-title">
+        <span class="highlight-wrapper">
+            <span class="bold-letter">M</span>arice
+            <span class="bold-letter">S</span>tu
+            <span class="bold-letter">D</span>y
+            <span class="bold-letter">L</span>ibrary
+        </span>
+    </h1>
+    
+    <div class="paper-title">测试：这是一个测试页面</div>
+    
+    <table class="info-table">
+        <tr>
+            <td>MSDL_N：mlsp-me-test</td>
+            <td>MSDLid：20250101test</td>
+            <td>创建日期：2025-1-1</td>
+            <td>归档日期：2025-1-1</td>
+            <td>撰稿人：Master</td>
+            <td><a href="#">下载全文</a></td>
+            <td><a href="../default.html">继续搜索</a></td>
+        </tr>
+        <tr>
+            <td>报告人：Master1、Master2</td>
+            <td>MSDLlid：msdt-proj-test0101</td>
+        </tr>
+    </table>
+    <div class="qrcode-container">
+        <img src="https://wmimg.com/i/1452/2025/05/681f4227550d7.png"
+             class="responsive-qrcode"
+             alt="二维码"
+             width="400"
+             height="400"
+             loading="lazy"
+             oncontextmenu="return false"> 
+    </div>
+
+    <div class="divider"></div>
+    <h2>详细内容</h2>
+    <p>E-Mail→ i@marice.top</p>
+    <div id="paper-content" class="content"></div>
+
+    <div class="image-toggle" onclick="toggleImages()">▼ 展开图片组</div>
+    <div class="image-gallery" id="imageGallery">
+        <img src="https://wmimg.com/i/1452/2025/05/681f4227550d7.png" alt="图片1">
+        <img src="https://wmimg.com/i/1452/2025/05/681f4227550d7.png" alt="图片2">
+        <img src="https://wmimg.com/i/1452/2025/05/681f4227550d7.png" alt="图片3">
+    </div>
+
+    <script>
+    fetch('20250412dtsa.md')
+      .then(response => response.text())
+      .then(mdContent => {
+        const htmlContent = marked.parse(mdContent);
+        document.getElementById('paper-content').innerHTML = htmlContent;
+      })
+      .catch(err => console.error('文件加载失败:', err));
+    document.getElementById('paper-content').addEventListener('contextmenu', e => {
+        e.preventDefault();
+    });
+
+    document.addEventListener('copy', e => {
+        if (e.target.closest('#paper-content')) {
+            e.preventDefault(); 
+            alert('内容为单向使用，受保护，有需要请联系');
+        }
+    });
+    </script>
+</body>
+</html>
